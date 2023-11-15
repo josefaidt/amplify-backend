@@ -1,8 +1,6 @@
-import fs from 'fs/promises';
-import path from 'path';
-import { shortUuid } from './short_uuid.js';
-
-const TEST_PROJECT_PREFIX = 'test-project';
+import * as fs from 'node:fs/promises';
+import * as path from 'node:path';
+import { createEmptyProject } from './create_empty_project.js';
 
 /**
  * Creates an empty Amplify project directory within the specified parent
@@ -16,8 +14,10 @@ export const createEmptyAmplifyProject = async (
   projectRoot: string;
   projectAmplifyDir: string;
 }> => {
-  const projectRoot = await fs.mkdtemp(path.join(parentDir, projectDirName));
-  const projectName = `${TEST_PROJECT_PREFIX}-${projectDirName}-${shortUuid()}`;
+  const { projectName, projectRoot } = await createEmptyProject(
+    projectDirName,
+    parentDir
+  );
   await fs.writeFile(
     path.join(projectRoot, 'package.json'),
     JSON.stringify({ name: projectName, type: 'module' }, null, 2)
